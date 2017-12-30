@@ -60,12 +60,15 @@ def loadInfo():
         if net2Ip[x[1]][0] not in ips:
             continue
         #print x[0], ips.get(net2Ip[x[1]][0], "unknown"), getNextHopIp(edges, x[1], x[2])
-        ifc = ips.get(net2Ip[x[1]][0], "unknown")
+        ip = net2Ip[x[1]]
+        ifc = ips.get(ip[0], "unknown")
         route = "route add --net %s gw %s dev %s"%(x[0], getNextHopIp(edges, x[1], x[2]), ifc)
         print route
         routes += [route]
-        intfs.add(ifc)
+        intfs.add([ip[0], ip[1], ifc])
 
+    for iface in intfs:
+        routes += [getDefaultRoute(*iface)]
     print intfs
     print routes
 
