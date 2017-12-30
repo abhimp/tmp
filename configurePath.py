@@ -57,7 +57,7 @@ def loadInfo():
 
     for x in info["rout"][host]:
         print x[0], net2Ip[x[1]], getNextHopIp(edges, x[1], x[2])
-        if net2Ip[x[1]] not in ips:
+        if net2Ip[x[1]][0] not in ips:
             continue
         print x[0], ips.get(net2Ip[x[1]], "unknown"), getNextHopIp(edges, x[1], x[2])
 
