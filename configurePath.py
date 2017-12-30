@@ -65,7 +65,7 @@ def loadInfo():
         route = "route add --net %s gw %s dev %s"%(x[0], getNextHopIp(edges, x[1], x[2]), ifc)
         print route
         routes += [route]
-        intfs.add([ip[0], ip[1], ifc])
+        intfs.add((ip[0], ip[1], ifc))
 
     for iface in intfs:
         routes += [getDefaultRoute(*iface)]
