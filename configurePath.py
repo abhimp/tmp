@@ -71,7 +71,7 @@ def loadInfo():
         ip = net2Ip[x[1]]
         ifc = ips.get(ip[0], "unknown")
         network = netaddr.IPNetwork(x[0])
-        route = "route add --net %s/%s gw %s dev %s"%(network.network, network.prefixlen, getNextHopIp(edges, x[1], x[2]), ifc)
+        route = "route add -net %s/%s gw %s dev %s"%(network.network, network.prefixlen, getNextHopIp(edges, x[1], x[2]), ifc)
         print route
         routes += [route]
         intfs.add((ip[0], ip[1], ifc))
