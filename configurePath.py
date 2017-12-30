@@ -27,6 +27,7 @@ def addRouteingTable(routes):
     scriptName = "/tmp/routes"
     fp = open(scriptName, "w")
     for r in routes:
+        print r
         print >> fp, r
     fp.close()
     p = subprocess.call("sudo bash " + scriptName, shell=True)
