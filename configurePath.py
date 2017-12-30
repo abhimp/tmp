@@ -29,7 +29,7 @@ def addRouteingTable(routes):
     for r in routes:
         print >> fp, r
     fp.close()
-    p = subprocess("sudo bash " + scriptName, shell=True)
+    p = subprocess.call("sudo bash " + scriptName, shell=True)
 
 def getDefaultRoute(ip, netmask, ifc):
     net = netaddr.IPNetwork("%s/%s"%(ip, netmask))
@@ -70,18 +70,20 @@ def loadInfo():
         #print x[0], ips.get(net2Ip[x[1]][0], "unknown"), getNextHopIp(edges, x[1], x[2])
         ip = net2Ip[x[1]]
         ifc = ips.get(ip[0], "unknown")
-        route = "route add --net %s gw %s dev %s"%(x[0], getNextHopIp(edges, x[1], x[2]), ifc)
+        network = netaddr.IPNetwork(x[0])
+        route = "route add --net %s/%s gw %s dev %s"%(network.network, network.prefixlen, getNextHopIp(edges, x[1], x[2]), ifc)
         print route
         routes += [route]
         intfs.add((ip[0], ip[1], ifc))
 
+    localrout = []
     for iface in intfs:
-        routes += [getDefaultRoute(*iface)]
+        localrout += [getDefaultRoute(*iface)]
         removeRoutingTable(iface[2])
     print intfs
     print routes
 
-    addRouteingTable(routes)
+    addRouteingTable(localrout + routes)
 
 
 
