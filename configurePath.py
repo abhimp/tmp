@@ -47,19 +47,29 @@ def loadInfo():
     edges = [[str(x).split("x")[0] if str(x).find("x")>=0 else str(x) for x in y] for y in info['edges']]
     
     net2Ip = {x[0] if not x[1].startswith("s") else x[1]:(x[2], x[3]) for x in edges if x[0] == host or x[1] == host}
-    print net2Ip
+    #print net2Ip
 
     ips = getIps()
-    print ips
+    #print ips
     routes = []
     #create local routes to 
 
-
+    intfs = set()
     for x in info["rout"][host]:
-        print x[0], net2Ip[x[1]], getNextHopIp(edges, x[1], x[2])
+        #print x[0], net2Ip[x[1]], getNextHopIp(edges, x[1], x[2])
         if net2Ip[x[1]][0] not in ips:
             continue
-        print x[0], ips.get(net2Ip[x[1]][0], "unknown"), getNextHopIp(edges, x[1], x[2])
+        #print x[0], ips.get(net2Ip[x[1]][0], "unknown"), getNextHopIp(edges, x[1], x[2])
+        ifc = ips.get(net2Ip[x[1]][0], "unknown")
+        route = "route add --net %s gw %s dev %s"%(x[0], getNextHopIp(edges, x[1], x[2]), ifc)
+        print route
+        routes += [route]
+        intfs.add(ifc)
+
+    print intfs
+    print routes
+
+
 
 
 
