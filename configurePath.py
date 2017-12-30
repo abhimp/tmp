@@ -34,7 +34,7 @@ def addRouteingTable(routes):
 
 def getDefaultRoute(ip, netmask, ifc):
     net = netaddr.IPNetwork("%s/%s"%(ip, netmask))
-    net = "%s/%s"%(net.netmask, net.prefixlen)
+    net = "%s/%s"%(net.network, net.prefixlen)
     route = "route add -net %s dev %s"%(net, ifc)
     return route
 
