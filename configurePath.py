@@ -79,7 +79,7 @@ def loadInfo():
 
     localrout = []
     for iface in intfs:
-        localrout += [getDefaultRoute(*iface)]
+        localrout += [getDefaultRoute(iface[0], iface[1], iface[1])]
         removeRoutingTable(iface[2])
     print intfs
     print routes
