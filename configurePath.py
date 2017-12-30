@@ -23,6 +23,14 @@ def removeRoutingTable(inf):
     p = subprocess.call("bash " + scriptName, shell=True)
     print p
 
+def addRouteingTable(routes):
+    scriptName = "/tmp/routes"
+    fp = open(scriptName, "w")
+    for r in routes:
+        print >> fp, r
+    fp.close()
+    p = subprocess("sudo bash " + scriptName, shell=True)
+
 def getDefaultRoute(ip, netmask, ifc):
     net = netaddr.IPNetwork("%s/%s"%(ip, netmask))
     net = "%s/%s"%(net.netmask, net.prefixlen)
@@ -69,8 +77,11 @@ def loadInfo():
 
     for iface in intfs:
         routes += [getDefaultRoute(*iface)]
+        removeRoutingTable(iface[2])
     print intfs
     print routes
+
+    addRouteingTable(routes)
 
 
 
