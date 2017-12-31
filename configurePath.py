@@ -82,8 +82,8 @@ def setRoutingTable(net2Ip, routes):
         #network = netaddr.IPNetwork(x[0])
         routeEntries += ["route add -net %s gw %s dev %s"%(x[0], x[2], ifc)]
         if len(x) > 3 and x[2] == "0.0.0.0/0":
-            ipRuleRoute += [ "ip rule add from {ip} table {table}".format(ip=net2Ip[x[1]][0], table=x[3]) ]
-            ipRuleRoute += [ "ip route add {network} dev {ifc} scope link table {table}".format(network=localNet.network+"/"+localNet.prefixlen, ifc=ifc, table=x[3])
+            ipRuleRoute += [ "ip rule add from {ip} table {table}".format(ip=net2Ip[x[1]][0], table=x[3])]
+            ipRuleRoute += [ "ip route add {network} dev {ifc} scope link table {table}".format(network=localNet.network+"/"+localNet.prefixlen, ifc=ifc, table=x[3])]
             ipRuleRoute += ["ip route add default via %s dev %s table %s"%(x[2], ifc, x[3])]
         intfs.add((ip[0], ip[1], ifc))
 
