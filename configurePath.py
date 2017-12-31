@@ -51,7 +51,7 @@ def adjustRouting(routs, edges):
     for x in routs:
         net = netaddr.IPNetwork(x[0])
         x[0] = "%s/%s"%(net.network, net.prefixlen)
-        y = [x[0], getNextHopIp(edges, x[1], x[2])]
+        y = [x[0], x[1], getNextHopIp(edges, x[1], x[2])]
         newRouts += [y]
     return newRouts
         
@@ -71,7 +71,7 @@ def setRoutingTable(net2Ip, routes):
         ip = net2Ip[x[1]]
         ifc = ips.get(ip[0], "unknown")
         #network = netaddr.IPNetwork(x[0])
-        route = "route add -net %s gw %s dev %s"%(x[0], x[1], ifc)
+        route = "route add -net %s gw %s dev %s"%(x[0], x[2], ifc)
         print route
         routeEntries += [route]
         intfs.add((ip[0], ip[1], ifc))
