@@ -46,6 +46,46 @@ def getNextHopIp(edges, s, r):
     ip2Net = {x[0] if not x[1].startswith("s") else x[1]:x[2] for x in edges if x[0] == r or x[1] == r}
     return ip2Net.get(s, None)
 
+def adjustRouting(routs):
+    newRouts = []
+    for x in routs:
+        net = netaddr.IPNetwork(x[0])
+        x[0] = "%s/%s"%(net.network, net.prefixlen)
+        newRouts += [x]
+    return newRouts
+        
+
+def setRoutingTable(net2Ip, routes):
+    ips = getIps()
+    #print ips
+    routeEntries = []
+    #create local routes to 
+
+    intfs = set()
+    for x in routes:
+        #print x[0], net2Ip[x[1]], getNextHopIp(edges, x[1], x[2])
+        if net2Ip[x[1]][0] not in ips:
+            continue
+        #print x[0], ips.get(net2Ip[x[1]][0], "unknown"), getNextHopIp(edges, x[1], x[2])
+        ip = net2Ip[x[1]]
+        ifc = ips.get(ip[0], "unknown")
+        #network = netaddr.IPNetwork(x[0])
+        route = "route add -net %s/%s gw %s dev %s"%(x[0], getNextHopIp(edges, x[1], x[2]), ifc)
+        print route
+        routeEntries += [route]
+        intfs.add((ip[0], ip[1], ifc))
+
+    localrout = []
+    for iface in intfs:
+        #print "iface", iface
+        localrout += [getDefaultRoute(iface[0], iface[1], iface[2])]
+        removeRoutingTable(iface[2])
+    #print intfs
+    #print routes
+
+    addRouteingTable(localrout + routeEntries)
+
+
 def loadInfo():
     info = json.load(open("/local/data.json"))
     host = socket.gethostname().split(".")[0]
@@ -57,37 +97,10 @@ def loadInfo():
     
     net2Ip = {x[0] if not x[1].startswith("s") else x[1]:(x[2], x[3]) for x in edges if x[0] == host or x[1] == host}
     #print net2Ip
+    route = adjustRouting(info['rout'][host])
+    print net2Ip
 
-    ips = getIps()
-    #print ips
-    routes = []
-    #create local routes to 
-
-    intfs = set()
-    for x in info["rout"][host]:
-        #print x[0], net2Ip[x[1]], getNextHopIp(edges, x[1], x[2])
-        if net2Ip[x[1]][0] not in ips:
-            continue
-        #print x[0], ips.get(net2Ip[x[1]][0], "unknown"), getNextHopIp(edges, x[1], x[2])
-        ip = net2Ip[x[1]]
-        ifc = ips.get(ip[0], "unknown")
-        network = netaddr.IPNetwork(x[0])
-        route = "route add -net %s/%s gw %s dev %s"%(network.network, network.prefixlen, getNextHopIp(edges, x[1], x[2]), ifc)
-        print route
-        routes += [route]
-        intfs.add((ip[0], ip[1], ifc))
-
-    localrout = []
-    for iface in intfs:
-        print "iface", iface
-        localrout += [getDefaultRoute(iface[0], iface[1], iface[2])]
-        removeRoutingTable(iface[2])
-    print intfs
-    print routes
-
-    addRouteingTable(localrout + routes)
-
-
+    setRoutingTable(net2Ip, route)
 
 
 
