@@ -88,6 +88,7 @@ def setRoutingTable(net2Ip, routes):
         intfs.add((ip[0], ip[1], ifc))
 
     localrout = []
+    print ipRuleRoute
     for iface in intfs:
         #print "iface", iface
         removeRoutingTable(iface[2])
