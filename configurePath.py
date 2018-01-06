@@ -98,6 +98,7 @@ def setRoutingTable(net2Ip, routes):
     #print routes
 
     addRouteingTable(localrout + routeEntries)
+    addRouteingTable(ipRuleRoute)
 
 
 def loadInfo():
