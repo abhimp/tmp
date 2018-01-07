@@ -61,6 +61,18 @@ def adjustRouting(routs, host, edges):
         x[2] = getNextHopIp(edges, x[1], x[2])
         newRouts += [x]
     return newRouts
+
+def saveViscousIp(gw, ip, ifc):
+    path="/tmp/viscous_ifconf/"
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+    fname = os.path.join(path, ifc)
+    fp = open(fname, "w")
+    print >> fp, "iface=%s"%(ifc)
+    print >> fp, "ip=%s"%(ip)
+    print >> fp, "gw=%s"%(gw)
+    fp.close()
         
 
 def setRoutingTable(net2Ip, routes):
@@ -93,6 +105,9 @@ def setRoutingTable(net2Ip, routes):
     localrout = []
     print "policy route", ipRuleRoute
     print "fileContent", fileContent
+    for fc in fileContent:
+        saveViscousIp(*fc)
+
     for iface in intfs:
         #print "iface", iface
         removeRoutingTable(iface[2])
