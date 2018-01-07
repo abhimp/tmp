@@ -71,6 +71,7 @@ def setRoutingTable(net2Ip, routes):
 
     intfs = set()
     ipRuleRoute = []
+    fileContent = []
     for x in routes:
         #print x[0], net2Ip[x[1]], getNextHopIp(edges, x[1], x[2])
         if net2Ip[x[1]][0] not in ips:
@@ -80,16 +81,18 @@ def setRoutingTable(net2Ip, routes):
         ifc = ips.get(ip[0], "unknown")
         localNet = netaddr.IPNetwork(ip[0], ip[1])
         #network = netaddr.IPNetwork(x[0])
-        if len(x) > 3 and x[0] == "0.0.0.0/0":
+        if len(x) > 3 and x[0] == "0.0.0.0/0": # x= ['0.0.0.0/0', u's4', '10.1.0.97'(, u'2')]
             ipRuleRoute += [ "ip rule add from {ip} table {table}".format(ip=net2Ip[x[1]][0], table=x[3])]
             ipRuleRoute += [ "ip route add {network} dev {ifc} scope link table {table}".format(network=str(localNet.network)+"/"+str(localNet.prefixlen), ifc=ifc, table=x[3])]
             ipRuleRoute += [ "ip route add default via %s dev %s table %s"%(x[2], ifc, x[3])]
+            fileContent += [[x[2], ip[0], ifc]]
         else:
             routeEntries += ["route add -net %s gw %s dev %s"%(x[0], x[2], ifc)]
             intfs.add((ip[0], ip[1], ifc))
 
     localrout = []
     print "policy route", ipRuleRoute
+    print "fileContent", fileContent
     for iface in intfs:
         #print "iface", iface
         removeRoutingTable(iface[2])
