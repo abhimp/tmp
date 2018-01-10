@@ -126,8 +126,13 @@ def setServerIp(host, edges):
     server = 'hvs'+cid
     ips = [x[2] for x in edges if x[1] == server]
     serverMacro = "VISCOUS_SERVER_"+server
-    fp = open("/etc/bash.bashrc", "a")
-    print >> fp, ""
+    fp = open("/tmp/servers.sh", "w")
+    for x in edges:
+        if not x[1].startswith('hvs'):
+            continue
+        ser = "VISCOUS_SERVER_"+x[1]
+        print >> fp, "export $"+ser+"="+x[2]
+        
     for ip in ips:
         print >> fp, "export $"+serverMacro+"="+ip
     fp.close()
