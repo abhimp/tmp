@@ -118,6 +118,19 @@ def setRoutingTable(net2Ip, routes):
     addRouteingTable(localrout + routeEntries)
     addRouteingTable(ipRuleRoute)
 
+def setServerIp(host, edges):
+    if not host.startswith("hvc"):
+        return
+    cid = host[3:]
+    ips = []
+    server = 'hvs'+cid
+    ips = [x[2] for x in edges if x[1] == server]
+    serverMacro = "VISCOUS_SERVER_"+server
+    fp = open("/etc/bash.bashrc", "a")
+    print >> fp, ""
+    for ip in ips:
+        print >> fp, "export $"+serverMacro+"="+ip
+    fp.close()
 
 def loadInfo():
     info = json.load(open("/local/data.json"))
