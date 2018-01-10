@@ -151,6 +151,7 @@ def loadInfo():
         return
     setRoutingTable(net2Ip, route)
 
+    setServerIp(host, edges)
 
 
 
