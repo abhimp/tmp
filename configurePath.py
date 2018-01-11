@@ -99,8 +99,10 @@ def setRoutingTable(net2Ip, routes):
             ipRuleRoute += [ "ip route add default via %s dev %s table %s"%(x[2], ifc, x[3])]
             fileContent += [[x[2], ip[0], ifc]]
         else:
-            routeEntries += ["route add -net %s gw %s dev %s"%(x[0], x[2], ifc)]
-            intfs.add((ip[0], ip[1], ifc))
+            pass
+
+        routeEntries += ["route add -net %s gw %s dev %s"%(x[0], x[2], ifc)]
+        intfs.add((ip[0], ip[1], ifc))
 
     localrout = []
     print "policy route", ipRuleRoute
@@ -125,16 +127,16 @@ def setServerIp(host, edges):
     ips = []
     server = 'hvs'+cid
     ips = [x[2] for x in edges if x[1] == server]
-    serverMacro = "VISCOUS_SERVER_"+server
+    serverMacro = "VISCOUS_SERVER"
     fp = open("/tmp/servers.sh", "w")
     for x in edges:
         if not x[1].startswith('hvs'):
             continue
         ser = "VISCOUS_SERVER_"+x[1]
-        print >> fp, "export $"+ser+"="+x[2]
+        print >> fp, "export "+ser+"="+x[2]
         
     for ip in ips:
-        print >> fp, "export $"+serverMacro+"="+ip
+        print >> fp, "export "+serverMacro+"="+ip
     fp.close()
 
 def loadInfo():
